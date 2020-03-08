@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package eventstreaming;
+
+// The greeting service definition.
+service Greeter {
+	// Sends a greeting
+	rpc SayHello(HelloRequest) returns(HelloReply) {}
+}
+
+// EventLogger service definition
+service EventLogger {
+
+	// receive multiple events at once
+	rpc postEvents(EventRequest) returns(EventResponse) {}
+
+	// let client stream events to the server
+	rpc postEventStream(stream EventStructure) returns(EventResponse) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+	required string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+	required string message = 1;
+}
+
+// response with event ids
+message EventResponse {
+	repeated string event_ids = 0;
+}
+
+// base structure for events
+message EventStructure {
+	required string event_id = 1;
+	required string name = 2;
+	required int64 time = 3;
+	map <string,string> params = 4;
+}
+
+// wrapper for event structure for batched request
+message EventRequest {
+	repeated EventStructure events = 0;
+}
